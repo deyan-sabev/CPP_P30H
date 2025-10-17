@@ -6,8 +6,15 @@
 # define the Cpp compiler to use
 CXX = g++
 
-# define any compile-time flags
-CXXFLAGS	:= -std=c++17 -Wall -Wextra -g
+# --- define any compile-time flags ---
+
+# Debug
+#CXXFLAGS	:= -std=c++17 -Wall -Wextra -g
+
+# Release
+CXXFLAGS	:= -std=c++17 -O2 -g0 -DNDEBUG -flto
+
+# -------------------------------------
 
 # define linker flags
 LDFLAGS :=
