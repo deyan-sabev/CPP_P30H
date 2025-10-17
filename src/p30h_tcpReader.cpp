@@ -37,7 +37,7 @@ bool P30HTcpReader::connect()
 /**
  * Затваря връзката с устройството.
  */
-void P30HTcpReader::close() const
+void P30HTcpReader::close()
 {
     client.modbus_close();
 }

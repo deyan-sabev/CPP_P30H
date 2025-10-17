@@ -1,6 +1,8 @@
+#include <iostream>
 #include <fstream>
 #include <sstream>
 #include <filesystem>
+#include <algorithm>
 
 #include "Device.hpp"
 
@@ -67,9 +69,12 @@ namespace device
         file.close();
 
         device_count = 0;
-        for (char c : content) if (c == '{') ++device_count;
-        if (device_count == 0) throw std::runtime_error("Не е открита информация за устройства в файла.");
+        device_count = std::count(content.begin(), content.end(), '{');
+        if (device_count <= 0) throw std::runtime_error("Не е открита информация за устройства в файла.");
+        else if (device_count >= SIZE_MAX) throw std::runtime_error("Неправилна стойност за 'device_count'.");
+        std::cout << "Брой намерени устройства в конфигурационния файл: " << device_count << std::endl;
         Device* devices = new Device[device_count];
+        if (!devices) throw std::runtime_error("Грешка при инициализацията на 'devices'.");
         size_t pos = 0;
         size_t index = 0;
         while ((pos = content.find('{', pos)) != std::string::npos && index < device_count)
@@ -79,9 +84,16 @@ namespace device
 
             std::string obj = content.substr(pos, end - pos + 1);
 
-            devices[index].ip = extract_string(obj, "ip");
-            devices[index].port = static_cast<uint16_t>(extract_int(obj, "port"));
-            devices[index].device_id = extract_int(obj, "id");
+            try
+            {
+                devices[index].ip = extract_string(obj, "ip");
+                devices[index].port = static_cast<uint16_t>(extract_int(obj, "port"));
+                devices[index].device_id = extract_int(obj, "id");
+            }
+            catch(const std::exception& e)
+            {
+                std::cerr << "\n Грешка при задаването на параметрите на устройствата: " << e.what() << '\n' << std::endl;;
+            }
 
             ++index;
             pos = end + 1;

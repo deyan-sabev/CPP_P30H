@@ -14,7 +14,7 @@ public:
     int get_slave_id() const;
 
     bool connect();
-    void close() const;
+    void close();
 
     uint16_t read_16bit(uint16_t address);
     float read_float32(uint16_t address, int16_t addr2 = -1, bool lo_first = false);
